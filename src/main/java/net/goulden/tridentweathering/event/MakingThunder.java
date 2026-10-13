@@ -5,6 +5,8 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.projectile.ThrownTrident;
@@ -53,14 +55,22 @@ public class MakingThunder {
                     LightningBolt bolt = EntityType.LIGHTNING_BOLT.create(tLevel);
                     if (bolt != null) {
                         bolt.setPos(trident.position());
-                        bolt.setVisualOnly(true);
                         bolt.getPersistentData().putBoolean(TAG_ACTIVE, true);
+                        bolt.setVisualOnly(true);
                         tLevel.addFreshEntity(bolt);
                     }
                     tData.putInt(TAG_LIGHTNING_BOLTS_TRIGGERED, tData.getInt(TAG_LIGHTNING_BOLTS_TRIGGERED) + 1);
                 }
-            } else if (triggers > wait + bolts && tData.getInt(TAG_LIGHTNING_BOLTS_TRIGGERED) == bolts) {
+            }
+            if (triggers == wait + bolts && tData.getInt(TAG_LIGHTNING_BOLTS_TRIGGERED) == bolts) {
                 ServerLevel serverLevel = ((ServerLevel) tLevel);
+                serverLevel.playSound(null,
+                        trident.getOnPos(),
+                        SoundEvents.LIGHTNING_BOLT_THUNDER,
+                        SoundSource.WEATHER,
+                        10000.0f,
+                        10f
+                );
                 serverLevel.setWeatherParameters(0, ServerLevel.THUNDER_DURATION.sample(serverLevel.getRandom()), true, true);
                 tData.putBoolean(TAG_ACTIVE, false);
             }
@@ -78,7 +88,7 @@ public class MakingThunder {
     }
 
     @SubscribeEvent
-    private static void cancelThundering(ProjectileImpactEvent event) {
+    private static void cancelMakeThunder(ProjectileImpactEvent event) {
         if (!(event.getProjectile() instanceof ThrownTrident trident)) return;
         if (trident.level().isClientSide()) return;
         trident.getPersistentData().putBoolean(TAG_ACTIVE, false);

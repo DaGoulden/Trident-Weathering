@@ -17,7 +17,7 @@ public class ConfigBuilder {
 
         protected final ModConfigSpec.IntValue clearTriggerDelay;
         protected final ModConfigSpec.IntValue rainWaitTriggers;
-        protected final ModConfigSpec.IntValue rainFakeTriggers;
+        protected final ModConfigSpec.IntValue rainTriggers;
         protected final ModConfigSpec.IntValue thunderWaitTriggers;
         protected final ModConfigSpec.IntValue thunderBoltsNeeded;
         protected final ModConfigSpec.DoubleValue thunderBoltProbability;
@@ -25,27 +25,27 @@ public class ConfigBuilder {
         Server(ModConfigSpec.Builder builder) {
 
             clearTriggerDelay = builder
-                    .comment("Delay (in ticks) between triggers to clear the weather when the trident is in the conduit.")
+                    .comment(" Delay (in ticks) between triggers to clear the weather when the trident is in the conduit.")
                     .defineInRange("clearTriggerDelay", 50, 1, 10000);
 
             rainWaitTriggers = builder
-                    .comment("Wait (in seconds) before starting with the fake triggers.")
+                    .comment(" Wait (in seconds) before starting with the triggers.")
                     .defineInRange("rainWaitTriggers", 1, 0, Integer.MAX_VALUE);
 
-            rainFakeTriggers = builder
-                    .comment("Amount of fake triggers before making it rain.")
-                    .defineInRange("rainFakeTriggers", 2, 0, Integer.MAX_VALUE);
+            rainTriggers = builder
+                    .comment(" Amount of triggers, with the last one making it rain.")
+                    .defineInRange("rainTriggers", 3, 1, Integer.MAX_VALUE);
 
             thunderWaitTriggers = builder
-                    .comment("Wait (in seconds) before starting with the lightning bolts triggers.")
+                    .comment(" Wait (in seconds) before starting with the lightning bolts triggers. (Change it only if needed)")
                     .defineInRange("thunderWaitTriggers", 2, 0, Integer.MAX_VALUE);
 
             thunderBoltsNeeded = builder
-                    .comment("Amount of lightning bolts that can strike and that are needed for making it thunder.")
-                    .defineInRange("thunderBoltsNeeded", 3, 0, Integer.MAX_VALUE);
+                    .comment(" Amount of lightning bolts that can strike and that are needed for making it thunder.")
+                    .defineInRange("thunderBoltsNeeded", 3, 1, 5);
 
             thunderBoltProbability = builder
-                    .comment("Probability of striking a lightning bolt.")
+                    .comment(" Probability of striking a lightning bolt.")
                     .defineInRange("thunderBoltProbability", 0.85, 0, 1);
         }
     }
