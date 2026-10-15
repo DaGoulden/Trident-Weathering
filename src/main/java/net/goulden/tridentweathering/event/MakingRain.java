@@ -60,7 +60,7 @@ public class MakingRain {
 
         sendCosmetics(serverLevel, x, y, z, entity.getEyeHeight(), rainTriggers, isLastTrigger);
 
-        if (isLastTrigger) serverLevel.setWeatherParameters(0, ServerLevel.RAIN_DURATION.sample(serverLevel.getRandom()) , true, false);
+        if (isLastTrigger) serverLevel.getServer().setWeatherParameters(0, ServerLevel.RAIN_DURATION.sample(serverLevel.getRandom()) , true, false);
 
     }
 

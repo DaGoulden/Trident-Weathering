@@ -3,6 +3,7 @@ package net.goulden.tridentweathering.event;
 import net.goulden.tridentweathering.TridentWeathering;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -40,7 +41,7 @@ public class MakingClear {
         ServerLevel serverLevel = ((ServerLevel) trident.level());
         sendCosmetics(serverLevel, trident.getBlockX() + 0.5, trident.getBlockY() + 0.5, trident.getBlockZ() + 0.5);
 
-        serverLevel.setWeatherParameters(ServerLevel.RAIN_DELAY.sample(serverLevel.getRandom()), 0, false, false);
+        serverLevel.getServer().setWeatherParameters(ServerLevel.RAIN_DELAY.sample(serverLevel.getRandom()), 0, false, false);
 
     }
 

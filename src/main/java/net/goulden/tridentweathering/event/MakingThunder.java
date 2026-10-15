@@ -54,7 +54,7 @@ public class MakingThunder {
         int triggers = (trident.tickCount - 1) / 10;
         if (triggers > wait
                 && triggers <= wait + bolts
-                && tLevel.random.nextDouble() < probability
+                && tLevel.getRandom().nextDouble() < probability
         ) {
             LightningBolt bolt = EntityType.LIGHTNING_BOLT.create(tLevel, EntitySpawnReason.TRIGGERED);
             if (bolt != null) {
@@ -74,7 +74,7 @@ public class MakingThunder {
                     10000.0f,
                     10f
             );
-            serverLevel.setWeatherParameters(0, ServerLevel.THUNDER_DURATION.sample(serverLevel.getRandom()), true, true);
+            serverLevel.getServer().setWeatherParameters(0, ServerLevel.THUNDER_DURATION.sample(serverLevel.getRandom()), true, true);
             tData.putBoolean(TAG_ACTIVE, false);
         }
     }
