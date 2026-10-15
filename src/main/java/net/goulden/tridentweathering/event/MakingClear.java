@@ -3,7 +3,6 @@ package net.goulden.tridentweathering.event;
 import net.goulden.tridentweathering.TridentWeathering;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;

@@ -8,7 +8,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.EntitySpawnReason;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.projectile.arrow.ThrownTrident;
 import net.minecraft.world.item.enchantment.Enchantments;
@@ -56,7 +56,7 @@ public class MakingThunder {
                 && triggers <= wait + bolts
                 && tLevel.getRandom().nextDouble() < probability
         ) {
-            LightningBolt bolt = EntityType.LIGHTNING_BOLT.create(tLevel, EntitySpawnReason.TRIGGERED);
+            LightningBolt bolt = EntityTypes.LIGHTNING_BOLT.create(tLevel, EntitySpawnReason.TRIGGERED);
             if (bolt != null) {
                 bolt.setPos(trident.position());
                 bolt.getPersistentData().putBoolean(TAG_ACTIVE, true);
