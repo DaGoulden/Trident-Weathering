@@ -51,7 +51,7 @@ public class MakingRain {
         int workingTicks = eventTick - entityData.getIntOr(TAG_START_TICK, 0);
         if (workingTicks % 20 != 1) return;
         int rainTriggers = workingTicks / 20 + 1 - wait;
-        if (rainTriggers < 1) return;
+        if (rainTriggers < 1 || rainTriggers > triggers) return;
 
         double x = entity.getX();
         double y = entity.getY();
