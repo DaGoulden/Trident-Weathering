@@ -13,7 +13,7 @@ public class TridentWeathering {
 
     public TridentWeathering(ModContainer modContainer) {
 
-        modContainer.registerConfig(ModConfig.Type.SERVER, ConfigBuilder.SERVER_SPEC);
+        modContainer.registerConfig(ModConfig.Type.SYNCED, ConfigBuilder.SERVER_SPEC);
 
     }
 }
