@@ -29,17 +29,17 @@ public class MakingRain {
     private static void makeRain(LivingEntityUseItemEvent.Tick event) {
 
         Entity entity = event.getEntity();
-        if (entity.level().isClientSide) return;
+        if (entity.level().isClientSide()) return;
         if (event.getItem().getItem() != Items.TRIDENT) return;
 
         int eventTick = EVENT_START_AT_TICK - event.getDuration();
         CompoundTag entityData = entity.getPersistentData();
         ServerLevel serverLevel = ((ServerLevel) entity.level());
-        if (entityData.getInt(TAG_START_TICK) > eventTick
+        if (entityData.getIntOr(TAG_START_TICK, 0) > eventTick
                 || entity.getXRot() > -80
                 || serverLevel.isRaining()
                 || serverLevel.getHeight(Heightmap.Types.MOTION_BLOCKING, (int) entity.getX(), (int) entity.getZ()) > entity.getY() + entity.getEyeHeight()
-                || serverLevel.getBiome(entity.blockPosition()).value().getPrecipitationAt(entity.blockPosition()) == Biome.Precipitation.NONE
+                || serverLevel.getBiome(entity.blockPosition()).value().getPrecipitationAt(entity.blockPosition(), 0) == Biome.Precipitation.NONE
         ) {
             entityData.remove(TAG_START_TICK);
             return;
@@ -48,7 +48,7 @@ public class MakingRain {
             entityData.putInt(TAG_START_TICK, eventTick);
         }
 
-        int workingTicks = eventTick - entityData.getInt(TAG_START_TICK);
+        int workingTicks = eventTick - entityData.getIntOr(TAG_START_TICK, 0);
         if (workingTicks % 20 != 1) return;
         int rainTriggers = workingTicks / 20 + 1 - wait;
         if (rainTriggers < 1) return;

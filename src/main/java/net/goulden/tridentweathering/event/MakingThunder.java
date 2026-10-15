@@ -7,9 +7,10 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LightningBolt;
-import net.minecraft.world.entity.projectile.ThrownTrident;
+import net.minecraft.world.entity.projectile.arrow.ThrownTrident;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -48,23 +49,23 @@ public class MakingThunder {
             tData.putInt(TAG_LIGHTNING_BOLTS_TRIGGERED, 0);
         }
 
-        if (!(tData.getBoolean(TAG_ACTIVE) && tLevel.canSeeSky(trident.blockPosition()))) return;
+        if (!(tData.getBooleanOr(TAG_ACTIVE, false) && tLevel.canSeeSky(trident.blockPosition()))) return;
 
         int triggers = (trident.tickCount - 1) / 10;
         if (triggers > wait
                 && triggers <= wait + bolts
                 && tLevel.random.nextDouble() < probability
         ) {
-            LightningBolt bolt = EntityType.LIGHTNING_BOLT.create(tLevel);
+            LightningBolt bolt = EntityType.LIGHTNING_BOLT.create(tLevel, EntitySpawnReason.TRIGGERED);
             if (bolt != null) {
                 bolt.setPos(trident.position());
                 bolt.getPersistentData().putBoolean(TAG_ACTIVE, true);
                 bolt.setVisualOnly(true);
                 tLevel.addFreshEntity(bolt);
             }
-            tData.putInt(TAG_LIGHTNING_BOLTS_TRIGGERED, tData.getInt(TAG_LIGHTNING_BOLTS_TRIGGERED) + 1);
+            tData.putInt(TAG_LIGHTNING_BOLTS_TRIGGERED, tData.getIntOr(TAG_LIGHTNING_BOLTS_TRIGGERED, 0) + 1);
         }
-        if (triggers == wait + bolts && tData.getInt(TAG_LIGHTNING_BOLTS_TRIGGERED) == bolts) {
+        if (triggers == wait + bolts && tData.getIntOr(TAG_LIGHTNING_BOLTS_TRIGGERED, 0) == bolts) {
             ServerLevel serverLevel = ((ServerLevel) tLevel);
             serverLevel.playSound(null,
                     trident.getOnPos(),
@@ -83,7 +84,7 @@ public class MakingThunder {
 
         if (!(event.getEntity() instanceof LightningBolt bolt)) return;
         if (bolt.level().isClientSide()) return;
-        if (!bolt.getPersistentData().getBoolean(TAG_ACTIVE)) return;
+        if (!bolt.getPersistentData().getBooleanOr(TAG_ACTIVE, false)) return;
 
         if (bolt.tickCount >= 1) bolt.discard();
 
