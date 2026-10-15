@@ -23,7 +23,7 @@ public class MakingClear {
     private static void makeClear(EntityTickEvent.Post event) {
 
         if (!(event.getEntity() instanceof ThrownTrident trident)) return;
-        if (trident.level().isClientSide) return;
+        if (trident.level().isClientSide()) return;
         if (!(trident.level().getBlockEntity(trident.getOnPos()) instanceof ConduitBlockEntity conduit)) return;
         if (!(conduit.isActive())) return;
 

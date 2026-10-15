@@ -29,7 +29,7 @@ public class MakingRain {
     private static void makeRain(LivingEntityUseItemEvent.Tick event) {
 
         Entity entity = event.getEntity();
-        if (entity.level().isClientSide) return;
+        if (entity.level().isClientSide()) return;
         if (event.getItem().getItem() != Items.TRIDENT) return;
 
         int eventTick = EVENT_START_AT_TICK - event.getDuration();
