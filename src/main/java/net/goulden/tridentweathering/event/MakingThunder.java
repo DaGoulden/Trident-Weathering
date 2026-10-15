@@ -30,7 +30,7 @@ public class MakingThunder {
     private static final String TAG_LIGHTNING_BOLTS_TRIGGERED = "TridentWeathering.LightningBoltsTriggered";
 
     @SubscribeEvent
-    public static void makeThunder(EntityTickEvent.Pre event) {
+    private static void makeThunder(EntityTickEvent.Pre event) {
 
         if (!(event.getEntity() instanceof ThrownTrident trident)) return;
         Level tLevel = trident.level();
@@ -48,49 +48,54 @@ public class MakingThunder {
             tData.putInt(TAG_LIGHTNING_BOLTS_TRIGGERED, 0);
         }
 
-        if (tData.getBoolean(TAG_ACTIVE) && tLevel.canSeeSkyFromBelowWater(trident.blockPosition())) {
-            int triggers = (trident.tickCount - 1) / 10;
-            if (triggers > wait && triggers <= wait + bolts) {
-                if (tLevel.random.nextDouble() < probability) {
-                    LightningBolt bolt = EntityType.LIGHTNING_BOLT.create(tLevel);
-                    if (bolt != null) {
-                        bolt.setPos(trident.position());
-                        bolt.getPersistentData().putBoolean(TAG_ACTIVE, true);
-                        bolt.setVisualOnly(true);
-                        tLevel.addFreshEntity(bolt);
-                    }
-                    tData.putInt(TAG_LIGHTNING_BOLTS_TRIGGERED, tData.getInt(TAG_LIGHTNING_BOLTS_TRIGGERED) + 1);
-                }
+        if (!(tData.getBoolean(TAG_ACTIVE) && tLevel.canSeeSky(trident.blockPosition()))) return;
+
+        int triggers = (trident.tickCount - 1) / 10;
+        if (triggers > wait
+                && triggers <= wait + bolts
+                && tLevel.random.nextDouble() < probability
+        ) {
+            LightningBolt bolt = EntityType.LIGHTNING_BOLT.create(tLevel);
+            if (bolt != null) {
+                bolt.setPos(trident.position());
+                bolt.getPersistentData().putBoolean(TAG_ACTIVE, true);
+                bolt.setVisualOnly(true);
+                tLevel.addFreshEntity(bolt);
             }
-            if (triggers == wait + bolts && tData.getInt(TAG_LIGHTNING_BOLTS_TRIGGERED) == bolts) {
-                ServerLevel serverLevel = ((ServerLevel) tLevel);
-                serverLevel.playSound(null,
-                        trident.getOnPos(),
-                        SoundEvents.LIGHTNING_BOLT_THUNDER,
-                        SoundSource.WEATHER,
-                        10000.0f,
-                        10f
-                );
-                serverLevel.setWeatherParameters(0, ServerLevel.THUNDER_DURATION.sample(serverLevel.getRandom()), true, true);
-                tData.putBoolean(TAG_ACTIVE, false);
-            }
+            tData.putInt(TAG_LIGHTNING_BOLTS_TRIGGERED, tData.getInt(TAG_LIGHTNING_BOLTS_TRIGGERED) + 1);
+        }
+        if (triggers == wait + bolts && tData.getInt(TAG_LIGHTNING_BOLTS_TRIGGERED) == bolts) {
+            ServerLevel serverLevel = ((ServerLevel) tLevel);
+            serverLevel.playSound(null,
+                    trident.getOnPos(),
+                    SoundEvents.LIGHTNING_BOLT_THUNDER,
+                    SoundSource.WEATHER,
+                    10000.0f,
+                    10f
+            );
+            serverLevel.setWeatherParameters(0, ServerLevel.THUNDER_DURATION.sample(serverLevel.getRandom()), true, true);
+            tData.putBoolean(TAG_ACTIVE, false);
         }
     }
 
     @SubscribeEvent
     private static void shortLightningBolt(EntityTickEvent.Pre event) {
+
         if (!(event.getEntity() instanceof LightningBolt bolt)) return;
         if (bolt.level().isClientSide()) return;
         if (!bolt.getPersistentData().getBoolean(TAG_ACTIVE)) return;
-        if (bolt.tickCount >= 1) {
-            bolt.discard();
-        }
+
+        if (bolt.tickCount >= 1) bolt.discard();
+
     }
 
     @SubscribeEvent
     private static void cancelMakeThunder(ProjectileImpactEvent event) {
+
         if (!(event.getProjectile() instanceof ThrownTrident trident)) return;
         if (trident.level().isClientSide()) return;
+
         trident.getPersistentData().putBoolean(TAG_ACTIVE, false);
+
     }
 }

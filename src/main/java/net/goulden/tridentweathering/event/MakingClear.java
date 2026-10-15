@@ -20,12 +20,13 @@ public class MakingClear {
     private static final String TAG_IN_CONDUIT_FIRST_TICK = "TridentWeathering.InConduitFirstTick";
 
     @SubscribeEvent
-    public static void makeClear(EntityTickEvent.Post event) {
+    private static void makeClear(EntityTickEvent.Post event) {
 
         if (!(event.getEntity() instanceof ThrownTrident trident)) return;
         if (trident.level().isClientSide) return;
         if (!(trident.level().getBlockEntity(trident.getOnPos()) instanceof ConduitBlockEntity conduit)) return;
         if (!(conduit.isActive())) return;
+
         CompoundTag tData = trident.getPersistentData();
         if (!tData.contains(TAG_IN_CONDUIT_FIRST_TICK)) {
             tData.putInt(TAG_IN_CONDUIT_FIRST_TICK, trident.tickCount);
@@ -33,10 +34,13 @@ public class MakingClear {
         }
         if ((trident.tickCount - tData.getInt(TAG_IN_CONDUIT_FIRST_TICK)) % delay != 1) return;
 
+        trident.lerpMotion(0, 0, 0);
+
         ServerLevel serverLevel = ((ServerLevel) trident.level());
         sendCosmetics(serverLevel, trident.getBlockX() + 0.5, trident.getBlockY() + 0.5, trident.getBlockZ() + 0.5);
-        trident.lerpMotion(0, 0, 0);
+
         serverLevel.setWeatherParameters(ServerLevel.RAIN_DELAY.sample(serverLevel.getRandom()), 0, false, false);
+
     }
 
     private static void sendCosmetics(ServerLevel serverLevel, double x, double y, double z) {
